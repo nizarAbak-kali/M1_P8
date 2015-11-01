@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nizar/Documents/boulot/M1_P8/S1/Intensif/testCmake1/hello.c
+stdio.h
+-
+stdlib.h
+-
+

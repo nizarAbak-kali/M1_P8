@@ -1,0 +1,26 @@
+TD1 Reseaux 
+
+auteur : Nizar ABAK-KALI 
+
+
+
+Exo 1:
+
+T = (Q)/(D) <=> Q = 100 Mo <=> Q = 100 * 2^10 * 2^10 octet = 800 Mbit 
+    	    	D = 100Mb/s <=> D = 100 * 10^6 bit 
+
+apres simplification de 100*10^6 en commun  : 
+      -> Q = 8 / D = 1. Donc T = 8 s 
+
+Exo 2 :
+   Nombre de paquets transferés par chacune des deux stations en une secondes .
+   
+    D = 1Mb/s
+    tmps_de_propagation = 15*10-³s 
+    T = (10*10³)/(10³*10³)= 1/10²=10ms
+    nb de packet = 1000/25 = 40 paquets //25 est l'adition de T+temps de transmmission 
+
+Exo 3:
+    1.    101111111111101->10111110111110101
+    2. 
+         

@@ -1,0 +1,29 @@
+cours 2 : Cmake + GIT/SVN
+
+
+-avant autotools : 
+
+      CMAKE :
+-------------   
+
+	- project(nompg langage)
+	#declaration de la lib
+	- add_library(nomlib source_n)
+	- set(EXTRA_LIBS ${EXTRA_LIBS} PngLib)
+	#link des libs 
+	- find_package(PNG REQUIRED)
+	- include_directories(${PNG_INCLUDE_DIR})
+	- target_link_libraries(PngLib ${PNG})
+
+--> $cmake CMakeLists.txt
+
+    
+
+    GIT :
+---------
+	# initialiser un rep git 
+	$ git init
+	
+	# ajout des fichiers que l'on souhaite suivre 
+	$ git add *.xyz
+	$ git add --all/ 

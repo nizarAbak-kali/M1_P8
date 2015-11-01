@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<pthread.h>
+#include<semaphore.h>
+
+sem_t titi;
+int nb_toto1=0;
+int nb_toto2=0;
+void* f0(void* t){
+  while(1){
+    nb_toto1+=1;
+    sem_wait(&titi);
+    sem_wait(&titi);
+  }
+
+}
+
+void* f1(void* t){
+  while(1){
+    nb_toto2 += 1;
+    sem_post(&titi);  
+  }
+
+}
+
+
+int main(){
+  pthread_t ID[2];
+  pthread_attr_t ATTr;
+
+  pthread_attr_init(&ATTr);
+  
+  sem_init(&titi,0,0);
+  pthread_create(&ID[0],&ATTr,f0,0);
+  pthread_create(&ID[1],&ATTr,f1,0);
+  
+  pthread_join(ID[0],0);
+  printf("t1 : %3d , t2 : %3d",nb_toto1,nb_toto2);
+  return 0; 
+}

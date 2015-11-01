@@ -1,0 +1,51 @@
+Exo 2 :
+
+1.
+	destination : FF.FF.FF.FF.FF.FF
+	source : 00.18.DE.10.FA.32
+2. c'est broadcast.
+
+3. code constructeur oxFFF
+4. code emeteur ox001
+
+5.ethernet 802.3
+
+6. 46 octet
+
+7. du bourrage
+
+8. 46-4 du CRC 
+
+9. EF.45.59.4A
+
+
+EXO 3:
+
+    1. une trame ethernet version 802.3 peut avoir jusqu'à 1500 octet de data donc 3 trame sont suffisante .
+
+    2. (1500 + 26 octet)*2 + (10+36+26)*1
+
+    3. cf correction 
+    4.
+
+Exo 4:
+
+    1. A: 2²⁴-2 adresse possible 
+       B: 2¹⁶-2 
+       C: 2⁸-2
+
+    2. - 147.216.|103.186 classe B
+       	  addr res : 147.216.0.0
+       - 108.|180.149.197 classe A
+       	  addr res : 108.0.0.0
+       - 224.129.162.89	 classe D
+       	 addr res : 224.129.162.89 non defini 
+       - 214.81.180.|209 classe C
+       	 addr res : 214.81.180.0 
+	 
+    3. - 10|001011 -> classe B
+       - 110|00010 -> classe C
+       - 0|0001100 -> classe A
+       - 0|0000100 -> classe A 
+
+       
