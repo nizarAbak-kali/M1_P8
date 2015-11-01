@@ -1,0 +1,68 @@
+ \documentclass[a4paper,12pt,final]{article}
+
+\usepackage[english,francais]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[pdftex]{graphicx}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage[french]{varioref}
+
+\title{Résumé de texte}
+\author{Nizar ABAK-KALI}
+\date{Du 16 juin au 25 juillet 2014}
+ 
+
+
+\newcommand{\ie}{intelligence économique }     % Titre
+
+\newcommand{\reporttitle}{Résumé de texte}     % Titre
+\newcommand{\reportauthor}{Nizar ABAK-KALI {11290569}} % Auteur
+\newcommand{\reportsubject}{Intelligence Economique} % Sujet
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\setlength{\parskip}{1ex} % Espace entre les paragraphes
+
+
+\hypersetup{
+    pdftitle={\reporttitle},%
+    pdfauthor={\reportauthor},%
+    pdfsubject={\reportsubject},%
+    pdfkeywords={rapport} {vos} {mots} {clés}
+}
+
+
+\begin{document}
+
+\include{title}
+
+\cleardoublepage % Dans le cas du recto verso, ajoute une page blanche si besoin
+
+\tableofcontents
+\sloppy
+
+\cleardoublepage 
+
+\include{introduction}
+
+\cleardoublepage
+
+\include{guide_bonne_pratique_ie_2002}
+
+\cleardoublepage
+
+\include{guide_de_bonne_pratique_ie_2009}
+
+\cleardoublepage
+
+\include{guide_une_demarche_2012}
+
+\cleardoublepage
+
+\include{comparatif}
+
+\cleardoublepage
+
+%\include{conclusion}
+%\cleardoublepage
+
+\end{document}

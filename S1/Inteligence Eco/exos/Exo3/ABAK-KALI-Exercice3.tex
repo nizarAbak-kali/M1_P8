@@ -1,0 +1,68 @@
+  \documentclass[a4paper,12pt,final]{article}
+
+\usepackage[english,francais]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[pdftex]{graphicx}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage[french]{varioref}
+
+\title{Rapport de recherche en vue du lancement d'un projet de nouveau super-ordinateur}
+\author{Nizar ABAK-KALI}
+\date{\today}
+ 
+
+
+\newcommand{\ie}{intelligence économique}     % Titre
+
+\newcommand{\reporttitle}{Rapport de recherche en vue du lancement d'un projet de nouveau super-ordinateur}     % Titre
+\newcommand{\reportauthor}{Nizar ABAK-KALI {11290569}} % Auteur
+\newcommand{\reportsubject}{Intelligence Economique} % Sujet
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\setlength{\parskip}{1ex} % Espace entre les paragraphes
+
+
+\hypersetup{
+    pdftitle={\reporttitle},%
+    pdfauthor={\reportauthor},%
+    pdfsubject={\reportsubject},%
+    pdfkeywords={rapport} {vos} {mots} {clés}
+}
+
+
+\begin{document}
+
+\include{title}
+
+\cleardoublepage % Dans le cas du recto verso, ajoute une page blanche si besoin
+
+\tableofcontents
+\sloppy
+
+\cleardoublepage 
+
+\include{introduction}
+
+\cleardoublepage
+
+\include{architecture}
+
+\cleardoublepage
+
+\include{os}
+
+\cleardoublepage
+
+\include{configuration}
+
+\cleardoublepage
+
+\include{}
+
+\cleardoublepage
+
+%\include{conclusion}
+%\cleardoublepage
+
+\end{document}

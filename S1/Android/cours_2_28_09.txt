@@ -1,0 +1,94 @@
+plan du cours 
+Android composer de :
+	- Activity : cmposant graphique correspondant à unn ecran 
+	- Service : composant ss UI tournant en tache de fond 
+	- Content Provider : permet à l'application de partager des donnés 
+	- Broadcast Recervers : réponds aux notif° ou changt d"états
+
+	de resssource 
+
+Android Manifest :
+	set min version 
+	taille d'ecran suppoter 
+	gerer les autorisations
+	
+la classe View :
+	laclasse est la classe de base de android (graphique )
+	les view sont claasse sous forme d'arbre .
+	pour customisee : surchache de de methode de view , ou les constructer
+	Evenement customisalbe :
+		Creation :
+			onFinishInflate 
+		cf polycop.
+Structure d'un projet 
+	Android Studio.
+	
+	Fichier AndroidManifest.xml
+	bin 
+	src 
+	gen 
+	res
+		drawable 
+		layout
+		menu
+		binaires
+		chaines
+	android lib 
+	assets contient les fichier stats -> tout fichiers qui n'est pas modifier par l'appli (musique , BD) .
+	
+Utilisation des ressources 
+	acces simplifier des ressource :on accede aux ressource grace à une constante R.drawable.backgroud
+
+	gestion de la spe° des ressources.
+		parametre de spécialisation sont séparés par des tickets 
+
+Externaliser la gestion des ressources 
+	pour tout types de ressource vous devez definir des ress par def et alt 
+	
+Point necessaire pour dev jeux 2D.
+
+	chargement de ressource graphique
+	rendue graphique 
+	l'interation avec les joueur
+	l'animation 
+
+Charger ress graphique 
+	la classe Context interface avec env app	
+	
+	la classe Resouces 
+	la classe BitmapFactory
+	
+le rendue graphique 
+	la classe surfaceView 
+		surfaceCreated 
+		surfaceDestroyed
+	SurfaceHolder
+	on a un controle sur la view 
+	pas sur le thread principale .
+	
+	la classe Canvas :
+		clipping
+		Dessins d'images 
+		Dessin de formes
+		opacité
+	Paint style de dessin.
+	
+L'interaction clavier :
+	une view notifie les actions claviers 
+	le callback indique le keycode de la touche concerné
+	indique egalement le contexte du boutton 
+
+La classe mediaPlayer 
+	on instancie un mediaplayer
+	on stocke les fichiers sonores dans le rep raw
+Utiliser le vibreur 
+	on accede au vibreur 
+	cancel
+	hasvibrator 
+	vibrate(long pattern,int repeat) ou (long millisecond)
+
+Persistance :Shared preferences 
+		
+		
+
+
