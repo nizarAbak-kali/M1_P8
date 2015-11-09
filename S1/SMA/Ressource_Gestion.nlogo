@@ -1,167 +1,124 @@
-globals [grass]  ;; keep track of how much grass there is
-;; Sheep and wolves are both breeds of turtle.
-breed [sheep a-sheep]  ;; sheep is its own plural, so we use "a-sheep" as the singular.
-breed [wolves wolf]
-turtles-own [energy]       ;; both wolves and sheep have energy
-patches-own [countdown]
+patches-own[countdown taille-plante]
+globals[ressource] ; pour garder le nombre de ressource quelque part
 
+breed [cows cow]
+breed [wolves wolf]
+turtles-own [energy odor vitesse]
 
 to setup
   clear-all
-  
-  
-  ask patches [ set pcolor green ]
-  ;; check GRASS? switch.
-  ;; if it is true, then grass grows and the sheep eat it
-  ;; if it false, then the sheep don't need to eat
-  
-
-  ask patches [
-    set pcolor one-of [green brown]
-    if-else pcolor = green 
-    [set countdown temps_repousse]
-    [set countdown random temps_repousse]
-    ]
-   
-  set-default-shape sheep "turtle"
-  create-sheep initial-number-sheep  ;; create the sheep, then initialize their variables
-  [
-    set color white
-    set size 1.5  ;; easier to see
-    set label-color blue - 2
-    set energy random (2 * sheep-gain-from-food)
-    setxy random-xcor random-ycor
-  ]
-  
-  set-default-shape wolves "wolf"
-  create-wolves initial-number-wolves  ;; create the wolves, then initialize their variables
-  [
-    set color black
-    set size 2  ;; easier to see
-    set energy random (2 * wolf-gain-from-food)
-    setxy random-xcor random-ycor
-  ]
-  
-  set grass count patches with [pcolor = green]
+ 
+  setup-patches
+  setup-cows
   
   reset-ticks
+  set ressource count patches with [pcolor = green]
 end
 
 to go
-  if not any? turtles [ stop ]
-  ask sheep [
-    move    
-    set energy energy - 1
-    eat-grass
-    death
-    reproduce-sheep
-  ]
-  ask wolves [
-    move
-    set energy energy - 1
-    catch-sheep
-    death
-    reproduce-wolves
-  ]
-  ask patches [ grow-grass ]
-  set grass count patches with [pcolor = green]
-
-  
-  tick
+ 
+   ask cows[
+     cows.eat-grass
+     cows.move-cows
+     ]
+    ask patches [ 
+     patch.renew-ressources 
+     patch.set-limit
+     ]
+    ask cows[
+        cows.let-odor
+      ]
+   tick
+   update-plot
 end
 
-to change_breed 
-  if energy <= 0 [ask myself [set breed wolves]]
-  if energy >= 1 [ask myself [set breed sheep]]
+to setup-cows 
+ set-default-shape cows "cow"
+  create-cows number-of-cows  ;; create the sheep, then initialize their variables
+  [
+    set color violet
+    set size 1.5  ;; easier to see
+    set label-color blue - 2
+    set energy random (2 * consommation-vache)
+    setxy random-xcor random-ycor
+    set odor max-odeur
+    set vitesse cow-speed
+  ]
+end
+
+
+to cows.eat-grass  ;; sheep procedure
+  ;; sheep eat grass, turn the patch brown
+    set taille-plante (taille-plante - consommation-vache)
+end
+
+to cows.move-cows
+     rt random 50
+     lt random 50
+     fd vitesse
 end 
 
-
-to move  ;; turtle procedure 
- 
+to cows.let-odor
+  let zone neighbors in-radius 4
   
-  if patch-at dx 0 = nobody [
-    set heading (- heading)
-  ]
-  if patch-at 0 dy = nobody [
-    set heading (180 - heading)
-  ]
-
-  rt random 50
-  lt random 50
-  fd 1 
+   set pcolor scale-color yellow  odor 1 ( max-odeur)
   
 end
 
-to grow-grass 
-  ;; countdown on brown patches: if reach 0, grow some grass
-  if pcolor = brown [
+to setup-patches
+    ask patches [ set pcolor green ]
+   
+     ask patches [
+      set pcolor one-of [green brown]
+      if-else pcolor = green
+        [ set countdown temps-repousse-herbe 
+          set taille-plante 0
+          ]
+        [ set countdown random  temps-repousse-herbe 
+          set taille-plante  ( ( temps-repousse-herbe - countdown ) mod 70)   
+        
+          ] ;; initialize grass grow clocks randomly for brown patches
+     ; set pcolor scale-color green ( taille-plante + 100) 0 255 
+     ]
+     
+end
+
+to patch.set-limit
+  if taille-plante > 70 
+     [ set taille-plante (taille-plante mod 70)]
+    
+end 
+to patch.renew-ressources 
+  if pcolor != green and pcolor != yellow [
     ifelse countdown <= 0
-      [ set pcolor green
-        set countdown temps_repousse ]
-      [ set countdown countdown - 1 ]
-  ]
-end
-
-to eat-grass  ;; sheep procedure
-  ;; sheep eat grass, turn the patch brown
-  if pcolor = green [
-    set pcolor brown
-    set energy energy + sheep-gain-from-food  ;; sheep gain energy by eating
-  ]
-end
-
-
-to reproduce-sheep  ;;sheep procedure
-  let sheepi one-of sheep in-radius 4 
-  if count sheep >= 2 and count sheep < 50  and sheepi != self [
-  ; if random-float 100 < sheep-reproduce / 100 [  ;; throw "dice" to see if you will reproduce
-    set energy (energy / 2)                ;; divide energy between parent and offspring
-    hatch 1 [ rt 180  fd 5 ]   ;; hatch an offspring and move it forward 1 step
-  ]
-end
-
-to reproduce-wolves  ;; wolf procedure
-  let wolfi one-of wolves in-radius 4 
-  if random-float 100 < wolf-reproduce and count wolves >= 2 and count wolves < 50 and wolfi != nobody and wolfi != self [  ;; throw "dice" to see if you will reproduce
-    set energy (energy - (energy / 2))               ;; divide energy between parent and offspring
-    hatch 1 [ rt 180  fd 5 ]  ;; hatch an offspring and move it forward 1 step
-  ]
-end
-
-to catch-sheep  ;; wolf procedure
-  let prey one-of sheep-here                    ;; grab a random sheep
-  if prey != nobody                             ;; did we get one?  if so,
-    [ ask prey [ die ]                          ;; kill it
-      set energy energy + wolf-gain-from-food ] ;; get energy from eating
-end
-
-to flee-from-predator ;; sheep procedure
-  let preda min-one-of wolves [distance myself]
-  if preda != nobody[
-    face preda 
-    set heading (heading - 180)
+    [
+      set pcolor green 
+      set countdown temps-repousse-herbe
+       set pcolor scale-color green ( taille-plante) 0 69
+      ]
+    [
+      set countdown countdown - 1
+      set taille-plante taille-plante + 1
+       set pcolor scale-color green ( taille-plante ) 0 69
     ]
- end
-
-
-to death  ;; turtle procedure
-  ;; when energy dips below zero, die
-  if energy < 0 [ die ]
+    
+   ]
 end
 
 
-
-; Copyright 1997 Uri Wilensky.
-; See Info tab for full copyright and license.
+ to update-plot
+        set-current-plot-pen "herbe"
+        plot sum [taille-plante] of patches
+   end
 @#$#@#$#@
 GRAPHICS-WINDOW
-738
-10
-1439
-732
--1
--1
-20.94
+296
+13
+798
+536
+20
+20
+12.0
 1
 10
 1
@@ -171,10 +128,10 @@ GRAPHICS-WINDOW
 1
 1
 1
-0
-32
-0
-32
+-20
+20
+-20
+20
 1
 1
 1
@@ -182,28 +139,11 @@ ticks
 30.0
 
 BUTTON
-98
-37
-161
-70
-NIL
-go
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-18
 35
-81
-68
-NIL
+79
+90
+112
+setup
 setup
 NIL
 1
@@ -215,139 +155,107 @@ NIL
 NIL
 1
 
-SLIDER
-15
-82
-48
-232
-initial-number-sheep
-initial-number-sheep
-0
-50
-50
+BUTTON
+151
+83
+206
+116
+go
+go
+T
 1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+21
+160
+273
+193
+temps-repousse-herbe
+temps-repousse-herbe
+0.0
+200
+61
+1.0
 1
 NIL
-VERTICAL
-
-SLIDER
-108
-86
-141
-236
-sheep-gain-from-food
-sheep-gain-from-food
-0
-10
-10
-1
-1
-NIL
-VERTICAL
-
-SLIDER
-63
-84
-96
-234
-initial-number-wolves
-initial-number-wolves
-0
-50
-15
-1
-1
-NIL
-VERTICAL
-
-SLIDER
-158
-86
-191
-239
-wolf-gain-from-food
-wolf-gain-from-food
-0
-10
-10
-1
-1
-NIL
-VERTICAL
-
-PLOT
-26
-270
-281
-441
-mouton/ticks
-tiks
-moutons
-0.0
-100.0
-0.0
-10.0
-true
-true
-"" ""
-PENS
-"default" 1.0 2 -7858858 true "" "plot count sheep"
-
-PLOT
-293
-270
-533
-440
-nb_loups/temps
-ticks
-nb_wolf
-0.0
-100.0
-0.0
-50.0
-true
-true
-"" ""
-PENS
-"default" 1.0 1 -2674135 true "" "plot count wolves"
-
-SLIDER
-249
-53
-421
-86
-wolf-reproduce
-wolf-reproduce
-0
-100
-78
-1
-1
-%
 HORIZONTAL
 
 SLIDER
-247
-94
-419
-127
-sheep-reproduce
-sheep-reproduce
-0
-100
-7
-1
-1
-%
-HORIZONTAL
-
-SLIDER
-280
-161
-452
+20
 194
-temps_repousse
-temps_repousse
+247
+227
+ressource-max-herbe
+ressource-max-herbe
+0.0
+500.0
+500
+1.0
+1
+NIL
+HORIZONTAL
+
+SLIDER
+22
+123
+205
+156
+proba-croissance-herbe
+proba-croissance-herbe
+0.0
+100
+42
+1.0
+1
+NIL
+HORIZONTAL
+
+PLOT
+6
+325
+277
+521
+Populations
+Time
+Pop
+0.0
+100.0
+0.0
+111.0
+true
+true
+"set-plot-y-range 0 number" ""
+PENS
+"grass" 1.0 0 -10899396 true "" "plot count patches with ressources"
+"cows" 1.0 0 -2674135 true "" "plot count cows"
+"desert" 1.0 0 -8630108 true "" "plot count patches with [pcolor = brown] / 4"
+"herbe" 1.0 0 -7500403 true "" ""
+
+MONITOR
+652
+553
+741
+598
+count cows
+count cows
+1
+1
+11
+
+SLIDER
+17
+230
+189
+263
+consommation-vache
+consommation-vache
 0
 100
 100
@@ -356,61 +264,143 @@ temps_repousse
 NIL
 HORIZONTAL
 
-PLOT
-119
-497
-319
-647
-plot 1
+SLIDER
+18
+265
+190
+298
+number-of-cows
+number-of-cows
+0
+100
+10
+1
+1
 NIL
+HORIZONTAL
+
+SLIDER
+76
+554
+248
+587
+max-odeur
+max-odeur
+0
+50
+50
+1
+1
 NIL
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "plot count wolves"
-"pen-1" 1.0 0 -7500403 true "" "plot count sheep"
+HORIZONTAL
+
+SLIDER
+273
+557
+445
+590
+cow-speed
+cow-speed
+0
+3
+0.3
+0.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+454
+557
+626
+590
+taux-diff
+taux-diff
+0
+100
+100
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+This project explores a simple ecosystem made up of rabbits, grass, and weeds. The rabbits wander around randomly, and the grass and weeds grow randomly.   When a rabbit bumps into some grass or weeds, it eats the grass and gains energy. If the rabbit gains enough energy, it reproduces. If it doesn't gain enough energy, it dies.
 
-## HOW IT WORKS
-
-(what rules the agents use to create the overall behavior of the model)
+The grass and weeds can be adjusted to grow at different rates and give the rabbits differing amounts of energy.  The model can be used to explore the competitive advantages of these variables.
 
 ## HOW TO USE IT
 
-(how to use the model, including a description of each of the items in the Interface tab)
+Click the SETUP button to setup the rabbits (red), grass (green), and weeds (violet). Click the GO button to start the simulation.
+
+The NUMBER slider controls the initial number of rabbits. The BIRTH-THRESHOLD slider sets the energy level at which the rabbits reproduce.  The GRASS-GROWTH-RATE slider controls the rate at which the grass grows.  The WEEDS-GROWTH-RATE slider controls the rate at which the weeds grow.
+
+The model's default settings are such that at first the weeds are not present (weeds-grow-rate = 0, weeds-energy = 0).  This is so that you can look at the interaction of just rabbits and grass.  Once you have done this, you can start to add in the effect of weeds.
 
 ## THINGS TO NOTICE
 
-(suggested things for the user to notice while running the model)
+Watch the COUNT RABBITS monitor and the POPULATIONS plot to see how the rabbit population changes over time. At first, there is not enough grass for the rabbits, and many rabbits die. But that allows the grass to grow more freely, providing an abundance of food for the remaining rabbits. The rabbits gain energy and reproduce. The abundance of rabbits leads to a shortage of grass, and the cycle begins again.
+
+The rabbit population goes through a damped oscillation, eventually stabilizing in a narrow range. The total amount of grass also oscillates, out of phase with the rabbit population.
+
+These dual oscillations are characteristic of predator-prey systems. Such systems are usually described by a set of differential equations known as the Lotka-Volterra equations. NetLogo provides a new way of studying predatory-prey systems and other ecosystems.
 
 ## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+Leaving other parameters alone, change the grass-grow-rate and let the system stabilize again.  Would you expect that there would now be more grass?  More rabbits?
 
-## EXTENDING THE MODEL
+Change only the birth-threshold of the rabbits.  How does this affect the steady-state levels of rabbits and grass?
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+With the current settings, the rabbit population goes through a damped oscillation. By changing the parameters, can you create an undamped oscillation? Or an unstable oscillation?
+
+In the current version, each rabbit has the same birth-threshold. What would happen if each rabbit had a different birth-threshold? What if the birth-threshold of each new rabbit was slightly different from the birth-threshold of its parent? How would the values for birth-threshold evolve over time?
+
+Now add weeds by making the sliders WEEDS-GROW-RATE the same as GRASS-GROW-RATE and WEEDS-ENERGY the same as GRASS-ENERGY.  Notice that the amount of grass and weeds is about the same.
+
+Now make grass and weeds grow at different rates.  What happens?
+
+What if the weeds grow at the same rate as grass, but they give less energy to the rabbits when eaten (WEEDS-ENERGY is less than GRASS-ENERGY)?
+
+Think of other ways that two plant species might differ and try them out to see what happens to their relative populations.  For example, what if a weed could grow where there was already grass, but grass couldn't grow where there was a weed?  What if the rabbits preferred the plant that gave them the most energy?
+
+Run the model for a bit, then suddenly change the birth threshold to zero.  What happens?
 
 ## NETLOGO FEATURES
 
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+Notice that every black patch has a random chance of growing grass or
+weeds each turn, using the rule:
+
+    if random-float 1000 < weeds-grow-rate
+      [ set pcolor violet ]
+    if random-float 1000 < grass-grow-rate
+      [ set pcolor green ]
 
 ## RELATED MODELS
 
-(models in the NetLogo Models Library and elsewhere which are of related interest)
+Wolf Sheep Predation is another interacting ecosystem with different rules.
 
-## CREDITS AND REFERENCES
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+## HOW TO CITE
+
+If you mention this model in a publication, we ask that you include these citations for the model itself and for the NetLogo software:
+
+* Wilensky, U. (2001).  NetLogo Rabbits Grass Weeds model.  http://ccl.northwestern.edu/netlogo/models/RabbitsGrassWeeds.  Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
+
+* Wilensky, U. (1999). NetLogo. http://ccl.northwestern.edu/netlogo/. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
+
+## COPYRIGHT AND LICENSE
+
+Copyright 2001 Uri Wilensky.
+
+![CC BY-NC-SA 3.0](http://ccl.northwestern.edu/images/creativecommons/byncsa.png)
+
+This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License.  To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+
+Commercial licenses are also available. To inquire about commercial licenses, please contact Uri Wilensky at uri@northwestern.edu.
+
+This model was created as part of the projects: PARTICIPATORY SIMULATIONS: NETWORK-BASED DESIGN FOR SYSTEMS LEARNING IN CLASSROOMS and/or INTEGRATED SIMULATION AND MODELING ENVIRONMENT. The project gratefully acknowledges the support of the National Science Foundation (REPP & ROLE programs) -- grant numbers REC #9814682 and REC-0126227.
 @#$#@#$#@
 default
 true
@@ -604,21 +594,12 @@ Polygon -7500403 true true 135 105 90 60 45 45 75 105 135 135
 Polygon -7500403 true true 165 105 165 135 225 105 255 45 210 60
 Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
 
-sheep
+rabbit
 false
-15
-Circle -1 true true 203 65 88
-Circle -1 true true 70 65 162
-Circle -1 true true 150 105 120
-Polygon -7500403 true false 218 120 240 165 255 165 278 120
-Circle -7500403 true false 214 72 67
-Rectangle -1 true true 164 223 179 298
-Polygon -1 true true 45 285 30 285 30 240 15 195 45 210
-Circle -1 true true 3 83 150
-Rectangle -1 true true 65 221 80 296
-Polygon -1 true true 195 285 210 285 210 240 240 210 195 210
-Polygon -7500403 true false 276 85 285 105 302 99 294 83
-Polygon -7500403 true false 219 85 210 105 193 99 201 83
+0
+Circle -7500403 true true 76 150 148
+Polygon -7500403 true true 176 164 222 113 238 56 230 0 193 38 176 91
+Polygon -7500403 true true 124 164 78 113 62 56 70 0 107 38 124 91
 
 square
 false
@@ -703,13 +684,6 @@ Line -7500403 true 216 40 79 269
 Line -7500403 true 40 84 269 221
 Line -7500403 true 40 216 269 79
 Line -7500403 true 84 40 221 269
-
-wolf
-false
-0
-Polygon -16777216 true false 253 133 245 131 245 133
-Polygon -7500403 true true 2 194 13 197 30 191 38 193 38 205 20 226 20 257 27 265 38 266 40 260 31 253 31 230 60 206 68 198 75 209 66 228 65 243 82 261 84 268 100 267 103 261 77 239 79 231 100 207 98 196 119 201 143 202 160 195 166 210 172 213 173 238 167 251 160 248 154 265 169 264 178 247 186 240 198 260 200 271 217 271 219 262 207 258 195 230 192 198 210 184 227 164 242 144 259 145 284 151 277 141 293 140 299 134 297 127 273 119 270 105
-Polygon -7500403 true true -1 195 14 180 36 166 40 153 53 140 82 131 134 133 159 126 188 115 227 108 236 102 238 98 268 86 269 92 281 87 269 103 269 113
 
 x
 false

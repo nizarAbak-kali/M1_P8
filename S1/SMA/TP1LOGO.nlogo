@@ -1,167 +1,119 @@
-globals [grass]  ;; keep track of how much grass there is
-;; Sheep and wolves are both breeds of turtle.
-breed [sheep a-sheep]  ;; sheep is its own plural, so we use "a-sheep" as the singular.
-breed [wolves wolf]
-turtles-own [energy]       ;; both wolves and sheep have energy
-patches-own [countdown]
+patches-own [ mouton ]
+
+breed [sheep a-sheep]
+globals [temps]
 
 
 to setup
   clear-all
-  
-  
   ask patches [ set pcolor green ]
-  ;; check GRASS? switch.
-  ;; if it is true, then grass grows and the sheep eat it
-  ;; if it false, then the sheep don't need to eat
-  
-
-  ask patches [
-    set pcolor one-of [green brown]
-    if-else pcolor = green 
-    [set countdown temps_repousse]
-    [set countdown random temps_repousse]
-    ]
-   
-  set-default-shape sheep "turtle"
-  create-sheep initial-number-sheep  ;; create the sheep, then initialize their variables
-  [
-    set color white
-    set size 1.5  ;; easier to see
-    set label-color blue - 2
-    set energy random (2 * sheep-gain-from-food)
-    setxy random-xcor random-ycor
-  ]
-  
-  set-default-shape wolves "wolf"
-  create-wolves initial-number-wolves  ;; create the wolves, then initialize their variables
-  [
-    set color black
-    set size 2  ;; easier to see
-    set energy random (2 * wolf-gain-from-food)
-    setxy random-xcor random-ycor
-  ]
-  
-  set grass count patches with [pcolor = green]
-  
-  reset-ticks
+  set production-desert  0
+  set etat-sheep 0
+  set consomation-vache 500
+  set temps_croissance  0
+  set temps 0
+  set taille-plante 3
+  setup-sheep
+  reset-timer
+   reset-ticks
 end
+
+
 
 to go
-  if not any? turtles [ stop ]
-  ask sheep [
-    move    
-    set energy energy - 1
-    eat-grass
-    death
-    reproduce-sheep
+  ;decor  ;exercice 1
+  ;show production-desert
+  ;Exercice 2
+  ask sheep[
+  move-sheep
+  mange-herbe
   ]
-  ask wolves [
-    move
-    set energy energy - 1
-    catch-sheep
-    death
-    reproduce-wolves
-  ]
-  ask patches [ grow-grass ]
-  set grass count patches with [pcolor = green]
+  repouse2
 
-  
-  tick
+tick
+;update-plot
 end
 
-to change_breed 
-  if energy <= 0 [ask myself [set breed wolves]]
-  if energy >= 1 [ask myself [set breed sheep]]
-end 
-
-
-to move  ;; turtle procedure 
- 
-  
-  if patch-at dx 0 = nobody [
-    set heading (- heading)
-  ]
-  if patch-at 0 dy = nobody [
-    set heading (180 - heading)
-  ]
-
-  rt random 50
-  lt random 50
-  fd 1 
-  
+to repousse-desert
+    ask patches[
+       if random production < production [  set pcolor yellow ]
+       set production-desert production-desert + 1
+       ]
 end
 
-to grow-grass 
-  ;; countdown on brown patches: if reach 0, grow some grass
-  if pcolor = brown [
-    ifelse countdown <= 0
-      [ set pcolor green
-        set countdown temps_repousse ]
-      [ set countdown countdown - 1 ]
-  ]
-end
-
-to eat-grass  ;; sheep procedure
-  ;; sheep eat grass, turn the patch brown
-  if pcolor = green [
-    set pcolor brown
-    set energy energy + sheep-gain-from-food  ;; sheep gain energy by eating
-  ]
-end
-
-
-to reproduce-sheep  ;;sheep procedure
-  let sheepi one-of sheep in-radius 4 
-  if count sheep >= 2 and count sheep < 50  and sheepi != self [
-  ; if random-float 100 < sheep-reproduce / 100 [  ;; throw "dice" to see if you will reproduce
-    set energy (energy / 2)                ;; divide energy between parent and offspring
-    hatch 1 [ rt 180  fd 5 ]   ;; hatch an offspring and move it forward 1 step
-  ]
-end
-
-to reproduce-wolves  ;; wolf procedure
-  let wolfi one-of wolves in-radius 4 
-  if random-float 100 < wolf-reproduce and count wolves >= 2 and count wolves < 50 and wolfi != nobody and wolfi != self [  ;; throw "dice" to see if you will reproduce
-    set energy (energy - (energy / 2))               ;; divide energy between parent and offspring
-    hatch 1 [ rt 180  fd 5 ]  ;; hatch an offspring and move it forward 1 step
-  ]
-end
-
-to catch-sheep  ;; wolf procedure
-  let prey one-of sheep-here                    ;; grab a random sheep
-  if prey != nobody                             ;; did we get one?  if so,
-    [ ask prey [ die ]                          ;; kill it
-      set energy energy + wolf-gain-from-food ] ;; get energy from eating
-end
-
-to flee-from-predator ;; sheep procedure
-  let preda min-one-of wolves [distance myself]
-  if preda != nobody[
-    face preda 
-    set heading (heading - 180)
+to repouse
+    ask patches[
+       set pcolor scale-color green random taille-plante 0 70
+       set production-desert production-desert - 1
     ]
- end
-
-
-to death  ;; turtle procedure
-  ;; when energy dips below zero, die
-  if energy < 0 [ die ]
 end
 
+to decor
+  if production-desert = 0 [
+    repousse-desert
+  ]
+  if production-desert >= 200 [
+    repouse
+  ]
+end
 
+to setup-sheep
+   set-default-shape sheep "sheep"
+   create-sheep initialize-number-sheep  ;; uses the value of the number slider to create turtles
+   [ set color scale-color white  etat-sheep 0 70
+     setxy random-xcor random-ycor ]
+end
 
-; Copyright 1997 Uri Wilensky.
-; See Info tab for full copyright and license.
+ to update-plot
+        set-current-plot-pen "herbe"
+        plot sum [taille-plante] of patches
+   end
+
+to move-sheep
+    rt random 50
+    lt random 50
+    fd 1
+end
+
+to mange-herbe
+     while [pcolor = scale-color green taille-plante 0 70 or pcolor = green and temps = 0] [
+       if temps_croissance = 500 [
+         set temps 1
+       ]
+       set taille-plante taille-plante - 0.5
+       set consomation-vache consomation-vache - 1
+       set temps_croissance temps_croissance + 1
+       set pcolor black
+
+     ]
+end
+
+to repouse2
+  ask patches[
+   while [ pcolor = black and temps = 1  ]   [
+
+        set  temps_croissance temps_croissance - 1
+        set consomation-vache consomation-vache + 1
+        set taille-plante 25
+        set pcolor scale-color green taille-plante 0 70
+
+        if temps_croissance = 0 [
+
+         set temps 0
+       ]
+   ]
+  ]
+
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-738
-10
-1439
-732
--1
--1
-20.94
+201
+6
+753
+579
+20
+20
+13.22
 1
 10
 1
@@ -171,38 +123,21 @@ GRAPHICS-WINDOW
 1
 1
 1
+-20
+20
+-20
+20
 0
-32
 0
-32
-1
-1
 1
 ticks
 30.0
 
 BUTTON
-98
-37
-161
-70
-NIL
-go
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-18
-35
-81
-68
+79
+66
+142
+99
 NIL
 setup
 NIL
@@ -215,165 +150,127 @@ NIL
 NIL
 1
 
-SLIDER
-15
-82
-48
-232
-initial-number-sheep
-initial-number-sheep
-0
-50
-50
-1
-1
+BUTTON
+22
+21
+85
+54
 NIL
-VERTICAL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 SLIDER
-108
-86
-141
-236
-sheep-gain-from-food
-sheep-gain-from-food
-0
-10
-10
-1
-1
-NIL
-VERTICAL
-
-SLIDER
-63
-84
-96
-234
-initial-number-wolves
-initial-number-wolves
-0
-50
-15
-1
-1
-NIL
-VERTICAL
-
-SLIDER
-158
-86
+19
+148
 191
-239
-wolf-gain-from-food
-wolf-gain-from-food
+181
+production
+production
 0
-10
-10
+5
+2
 1
 1
 NIL
-VERTICAL
-
-PLOT
-26
-270
-281
-441
-mouton/ticks
-tiks
-moutons
-0.0
-100.0
-0.0
-10.0
-true
-true
-"" ""
-PENS
-"default" 1.0 2 -7858858 true "" "plot count sheep"
-
-PLOT
-293
-270
-533
-440
-nb_loups/temps
-ticks
-nb_wolf
-0.0
-100.0
-0.0
-50.0
-true
-true
-"" ""
-PENS
-"default" 1.0 1 -2674135 true "" "plot count wolves"
-
-SLIDER
-249
-53
-421
-86
-wolf-reproduce
-wolf-reproduce
-0
-100
-78
-1
-1
-%
 HORIZONTAL
 
 SLIDER
+18
+200
+190
+233
+production-desert
+production-desert
+0
+10000
+0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+17
 247
-94
-419
-127
-sheep-reproduce
-sheep-reproduce
+189
+280
+taille-plante
+taille-plante
 0
 100
-7
+3
 1
 1
-%
+NIL
 HORIZONTAL
 
 SLIDER
-280
-161
-452
+17
+293
 194
-temps_repousse
-temps_repousse
+326
+initialize-number-sheep
+initialize-number-sheep
 0
-100
-100
+20
+2
 1
 1
 NIL
 HORIZONTAL
 
-PLOT
-119
-497
-319
-647
-plot 1
+SLIDER
+14
+338
+186
+371
+etat-sheep
+etat-sheep
+0
+30
+0
+1
+1
 NIL
+HORIZONTAL
+
+SLIDER
+15
+391
+187
+424
+consomation-vache
+consomation-vache
+0
+1000
+500
+1
+1
 NIL
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "plot count wolves"
-"pen-1" 1.0 0 -7500403 true "" "plot count sheep"
+HORIZONTAL
+
+SLIDER
+18
+442
+190
+475
+temps_croissance
+temps_croissance
+0
+1000
+0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
