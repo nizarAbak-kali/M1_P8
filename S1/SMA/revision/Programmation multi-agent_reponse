@@ -1,0 +1,31 @@
+				Programmation multi-agent
+
+Questions diverses :
+
+Q1: Quelles est la différence entre un objet et un agent ?
+
+-------------------------------------------------------------
+Q2: Citez deux exemples de mécanismes d'auto-organisation
+
+--------------------------------------------------------------
+Q3: Quelles est la difference entre les applications dévellopper avec Netlogo et celles dévellopper en Jade . 
+
+--------------------------------------------------------------
+Q4: Quelle est la difference entre un système complexes et 
+un système compliqué ?
+
+ Système compliqué : peut être décomposé pour être compris et étudié exemple : Moteur de voiture. Système complexe : perd son intelligibilité s’il est décomposé exemple : Ecosystème, chaîne alimentaire
+Un syst compliqué, on peut le simplifier pour découvrir son intelligibilité. Un syst complexe, on doit le modéliser pour construire son intelligibilité. 
+
+--------------------------------------------------------------
+Q5: Quelle est la difference entre un SMA et un système expert ?
+--------------------------------------------------------------
+Q6 Quelles est la difference entre un SMA et un systèmes distribuer ?
+--------------------------------------------------------------
+NetLogo :
+lapin :
+	lache une trace d'odeur a chaque pas 
+	deplacement aléatoire
+	suit l'odeur la plus forte parmis ses patch voisins
+	
+--------------------------------------------------------------

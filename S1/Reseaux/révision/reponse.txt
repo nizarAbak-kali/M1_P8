@@ -1,0 +1,11 @@
+Partie I:
+	soit R1 un réseau d'IP : 198.10.10.0
+
+	Q1 : Rappelez la definition d'un res LAN :
+	 	 c'est un réseau local, qui relie des ordis dans une zone limité comme une maison ou une école .
+	Q2 : Classe du reseau R1 :
+		le reseau est de classe C car 198....
+	Q3 : masque réseau en Notation décimale pointé et en notation CIDR :
+		NDP:  255.255.255.0 ; CIDR: 255.255.255.0/24
+	Q4 : 
+	Q5 : 256/4 sous-reseau = 64
