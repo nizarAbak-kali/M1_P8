@@ -1,0 +1,13 @@
+RRT-Connect (Rapidly-exploring
+Random Trees) : An Efficient Approach to Single-Query Path Planning
+(en fr : RRT-CONNECT: une approche efficace à la plannification de chemin à requête simple)
+
+
+Abstract : 
+	- cette methode fonctionne en construisant de manière incrementale 2 RRT l'un ayant pour racine le point de départ l'autre le point d'arrivé . les deux arbres explore l'espace autour d'eux et avance l'un vesrs l'autre à l'aide d'un simple heuristique(L'heuristique est une règle pragmatique ayant un degré de généralisation.) avare. 
+	- concue pour la plannificcation d'un mouvement d'un bras humanoide pour l'animation graphique automatique de tache de préhension et de manipalution sans collision .
+
+Intoduction :
+	- problematique levé : la plannification de mouvement dans l'espace
+	- plusieurs domaine conserné : robotique , assembly analysis, 
+	prototypages virtuel, conception de medoc pharmacologique, animation assisté pas ordinateur.
