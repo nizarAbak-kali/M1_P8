@@ -39,3 +39,4 @@
 							et techniqument)   - incrémental }plannification opérationnnel
 											   - adaptatif 
 #4 valeur Fondamentales
+	- equipe  est  + importante que les outils 
