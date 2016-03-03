@@ -1,0 +1,69 @@
+﻿ 	$DMA 
+
+OUVERTURE des canal dma : 
+- rest tab TCD 
+
+NByte tailles du message , 
+si interruption INT_MAj a modifier
+
+caches, MMU:
+principes des caches: 1 cpu(avec registres)
+1 acces memoire 1 ms 
+
+element d'un cache 
+	MEM associative -> CAM (content addressable memory)
+
+
+equivalence : 
+	8 bit : 256 val
+	16 bit : 64 k 
+	20 bit : 1Mo 
+	24 bit : 16Mo
+	32 bit : 4 Go 
+
+cache indexé :
+	
+	exemple : 
+	
+	Machine de 32 bits 
+	64 k : A15 ... A0
+	cache 64k , 
+	ligne de cache de 4 mots, 
+	
+	BLOC  : 16 octet : 4  bit   | A3  ... A0
+	INDEX : 12 bit  	| A15 ... A4
+	TAG   : | A31 ... A16
+
+	cache 16k : 14 bits
+	ligne 4 mot de 32 bits 
+	BLOC : A3  ... A0
+	INDEX: A13 ... A4
+	TAG  : A31 ... A14
+
+	cache 256k = 17 1
+	ligne 8 mot de 32 bits = 32octet
+
+	BLOC : A4  ... A0
+	INDEX: A17 ... A5
+	TAG  : A31 ... A18
+
+	cache 1Mo = 20 bit 
+	ligne 4 mot de 32 bits = 16octet
+
+	BLOC : A3  ... A0
+	INDEX: A19 ... A4
+	TAG  : A31 ... A20
+
+
+MMU : Memory management Unit 
+
+
+
+QUESTION TYPES : 
+MAPPING 
+CABLAGE CARTE 
+
+
+/**/
+
+

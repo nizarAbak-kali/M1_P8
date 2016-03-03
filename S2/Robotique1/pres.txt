@@ -1,0 +1,10 @@
+8 slides :
+
+	slide 1 : presentation rapide de l'article 
+	slide 2 : enonciation du sommaire .
+	slide 3 : explication de la plannification de chemin : definition, 
+	slide 4 : 
+			- presentation de rrt rapidement 
+			- presentation rrt-connect -> algo 
+			- apport possible 
+			- 

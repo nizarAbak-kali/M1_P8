@@ -1,0 +1,42 @@
+Soit un microcontrôleur capable de générer des Chip Select d’espaces compris entre 1MO et 64 MO
+
+Exo 1 : Le mapping
+
+Un emplacement Flash de boot (8 bits) compatible 128 /256 Ko (CS0)
+
+Un sérialiseur extérieur (CS1 en début de zone adresse contiguë à  la flash)
+
+Un emplacement Eprom 2 MO (CS2 dans une zone adresse contiguë au sérialiseur
+
+Une barrette mémoire DRAM de 32 Mo placée en 0
+
+Nb : 
+	
+	20bit - 1Mo   - 0x10 0000
+	19bit - 512ko -  0x8 0000
+	18bit - 256ko -  0x4 0000
+	17bit - 128ko -  0x2 0000
+
+	0 1 2 3 4 5 6 7 8 9 A B C D E F
+
+				Adresse de début	Adresse de fin
+
+Flash 128 Ko    FFFE 0000 			 FFFF FFFF                                                 
+	
+Flash 256 Ko    FF9F                 FFFD FFFF             
+
+
+
+
+Sérialiseur
+
+
+
+
+Eprom 2 Mo
+
+
+
+
+DRAM 32 Mo              0
+
